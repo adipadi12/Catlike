@@ -24,13 +24,15 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("References")]
     private CharacterController controller;
-
+    private Animator animator;
+    
     private Vector2 moveInput; // from Input System
     private bool isRunning;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
     }
 
     // These will be called by PlayerInput events
@@ -50,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
         if (context.performed && isGrounded)
         {
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            animator.SetTrigger("Jump");
         }
     }
     
@@ -64,7 +67,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        
         isGrounded = controller.isGrounded;
         if (isGrounded && verticalVelocity < 0)
         {
@@ -74,6 +76,10 @@ public class PlayerMovement : MonoBehaviour
         Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         if (move.magnitude >= 0.1f)
         {
+            //rotate player to where the movement direction is
+            Quaternion targetRotation = Quaternion.LookRotation(move);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            
             float speed;
             if (isCrouching)
             {
@@ -94,7 +100,12 @@ public class PlayerMovement : MonoBehaviour
 
         //gravity applied
         verticalVelocity += gravity * Time.deltaTime;
-        
         controller.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
+        
+        //animator parameters updated
+        float animationSpeed = new Vector3(moveInput.x, 0, moveInput.y).magnitude;
+        animator.SetFloat("Speed", animationSpeed * (isRunning ? 1f : 0.5f)); //for blend tree
+        animator.SetBool("IsCrouching", isCrouching);
+        animator.SetBool("IsGrounded", isGrounded);
     }
 }

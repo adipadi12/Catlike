@@ -106,6 +106,7 @@ public class PlayerMovement : MonoBehaviour
         float animationSpeed = new Vector3(moveInput.x, 0, moveInput.y).magnitude;
         animator.SetFloat("Speed", animationSpeed * (isRunning ? 1f : 0.5f)); //for blend tree
         animator.SetBool("IsCrouching", isCrouching);
+        animator.SetFloat("Crouch", animationSpeed * (isCrouching ? 1f : 0.5f));
         animator.SetBool("IsGrounded", isGrounded);
     }
 }

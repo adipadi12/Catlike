@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     
     [Header("Crouch Settings")]
-    public float crouchHeight = 1f;      // height when crouched
+    public float crouchHeight = 0.5f;      // height when crouched
     public float standHeight = 2f;       // normal height
     public float crouchSpeed = 2.5f;     // slower speed
     private bool isCrouching;

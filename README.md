@@ -1,4 +1,5 @@
 # Catlike
+Modular Component 1: Character Controller from scratch with animations and random shooter made on unity 6
 ![2025-08-17 23-37-41](https://github.com/user-attachments/assets/8beabd1e-c1a3-4102-a99a-cce5837340a6)
 
 

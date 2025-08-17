@@ -1,10 +1,11 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class GunProjectile : MonoBehaviour
 {
-    [SerializeField] private GameObject bullet;
+    [SerializeField] private GameObject[] projectilePrefabs;
     
     [SerializeField] float shootForce, upwardForce;
 
@@ -18,7 +19,6 @@ public class GunProjectile : MonoBehaviour
 
     [SerializeField] private Camera cam;
     [SerializeField] private Transform attackPoint;
-    [SerializeField] private GameObject muzzleFlash;
     
     public bool allowInvoke = true;
 
@@ -66,29 +66,17 @@ public class GunProjectile : MonoBehaviour
         }
 
         Vector3 directionWithoutSpread =  attackPoint.transform.forward;
-
-        // //spread
-        // float x =  Random.Range(-spread, spread);
-        // float y =  Random.Range(-spread, spread);
-        //
-        // // direcn with spread
         Vector3 directionWithSpread = directionWithoutSpread;
         
         //instantiate
-        GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity);
-        currentBullet.GetComponent<MeshRenderer>().material
-            .SetColor("_BaseColor", Color.Lerp(Color.red, Color.black, 3));
+        GameObject projectile = projectilePrefabs[Random.Range(0, projectilePrefabs.Length)];
+        GameObject currentBullet = Instantiate(projectile, attackPoint.position, Quaternion.identity);
         Debug.Log("Bullet shot");
+        StartCoroutine(DestroyAfterShot(currentBullet));
         
-        currentBullet.transform.forward = directionWithSpread.normalized; //rotate bullet to shoot direction
+        currentBullet.transform.forward = directionWithSpread.normalized; //rotate projectilePrefabs to shoot direction
         
         currentBullet.GetComponent<Rigidbody>().AddForce(directionWithSpread.normalized * shootForce, ForceMode.Impulse);
-
-        //flash
-        if (muzzleFlash != null)
-        {
-            Instantiate(muzzleFlash, attackPoint.position, Quaternion.identity);
-        }
         
         bulletsLeft--;
         bulletsShot++;
@@ -100,6 +88,12 @@ public class GunProjectile : MonoBehaviour
         }
     }
 
+    IEnumerator DestroyAfterShot(GameObject projectilePrefabs)
+    {
+        yield return new WaitForSeconds(5f);
+        Destroy(projectilePrefabs);
+    }
+    
     void ResetShot()
     {
         readyToShoot =  true;
